@@ -1,0 +1,17 @@
+data
+__pycache__
+*.pkl
+*.parquet
+
+evaluation_data
+training_data
+tmp
+visualization_results
+Book2.csv
+group_acc_results.csv
+
+training_data
+evaluation_data
+
+.vscode
+.env
