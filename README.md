@@ -51,7 +51,7 @@ We present <strong>Multi-SpatialMLLM</strong> to equip MLLMs with robust multi-f
 
 ## Data Engine
 ### Environment
-To set up the Conda environment for this our data engine, please follow these steps:
+To set up the Conda environment for our data engine, please follow these steps:
 
 1.  Ensure you have [Anaconda](https://www.anaconda.com/products/distribution) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) installed.
 2.  Clone this repository.
@@ -81,7 +81,7 @@ Follow [TAPVid-3D](https://github.com/google-deepmind/tapnet/tree/main/tapnet/ta
     ```python
         # also add this for warning
         sequence_path = os.path.join(input_adt_path, adt_v2_name)
-        # if the sequence_path is not exist, write to an warning file and exit
+        # if the sequence_path does not exist, write to a warning file and exit
         if not os.path.exists(sequence_path):
             with open(f"adt_warning.txt", "a") as f:
             f.write(f"Sequence {seq_name} does not exist.")
@@ -112,13 +112,13 @@ Follow [TAPVid-3D](https://github.com/google-deepmind/tapnet/tree/main/tapnet/ta
   - Each npz file from TAPVid-3D contains the following keys:
     ```python
       """
-      Each *.npz file, contains:
+      Each *.npz file contains:
 
       images_jpeg_bytes: tensor of shape [# of frames, height, width, 3], each frame stored as JPEG bytes that must be decoded
       intrinsics: (fx, fy, cx, cy) camera intrinsics of the video
-      tracks_xyz: tensor of shape (# of frames, # of point tracks, 3), representing the 3D point trajectories and the last dimension is the (x, y, z) point position in meters. They are in camera coordiate. They are in camera coordiates.
+      tracks_xyz: tensor of shape (# of frames, # of point tracks, 3), representing the 3D point trajectories and the last dimension is the (x, y, z) point position in meters. They are in camera coordinates.
       visibility: tensor of shape (# of frames, # of point tracks), representing the visibility of each point along its trajectory
-      queries_xyt: tensor of shape (# of point tracks, 3), representing the query point used in the benchmark as the initial given point to track. The last dimension is given in (x, y, t), where x,y is the pixel location of the query point and t is the query frame.
+      queries_xyt: tensor of shape (# of point tracks, 3), representing the query point used in the benchmark as the initial given point to track. The last dimension is given in (x, y, t), where x,y are the pixel location of the query point and t is the query frame.
       extrinsics_w2c: tensor of shape (#, 4, 4)
       """
     ```
@@ -140,14 +140,14 @@ Follow [TAPVid-3D](https://github.com/google-deepmind/tapnet/tree/main/tapnet/ta
           cd tapnet
           ADT_OUTPUT_DIRECTORY="tapvid3d_dataset/adt/"\nmkdir -p $ADT_OUTPUT_DIRECTORY
           PYTHON_DEBUG="False"
-          conda activate projectaria # if applicabe, use a new env
+          conda activate projectaria # if applicable, use a new env
           python3 -m tapnet.tapvid3d.annotation_generation.generate_adt --output_dir=$ADT_OUTPUT_DIRECTORY --debug=$PYTHON_DEBUG --split=all --adt_base_path data/projectaria_tools_adt_data
           ```
           Specifically, in `tapnet/tapnet/tapvid3d/annotation_generation/generate_adt.py`:
           ```
           gcs_utils.download_tapvid3d_files(tmp_adt_dir, _SPLIT.value, "adt", _DEBUG.value)
           ```
-          this function will download the npz files from the given url to `tmp` (which costs about 11G) and the following function will merge the images/videos from `adt_base_path` to the npz file.
+          This function will download the npz files from the given url to `tmp` (which costs about 11G), and the following function will merge the images/videos from `adt_base_path` to the npz file.
           ```
           generate_adt_npz(_ADT_BASE_PATH.value, tmp_adt_dir, _OUTPUT_DIR.value)
           ```
@@ -164,9 +164,9 @@ Finally, we assume the structure of the data is like:
   ```
 
 ### Data Generation
-We generate the data based on the conversation format of [InternVL](https://internvl.readthedocs.io/en/latest/get_started/chat_data_format.html#multi-image-data), you could easily change the generated jsonl file to the format of your own.
+We generate the data based on the conversation format of [InternVL](https://internvl.readthedocs.io/en/latest/get_started/chat_data_format.html#multi-image-data). You could easily change the generated jsonl file to the format of your own.
 #### Camera Movement
-1. Run `python spatial_engine/camera_movement/calculate_frames_relations.py` to calculate the spatial relations between frames, e.g. their overlap ratios. After running this script, a parquet containing these spatial information will be generated in `training_data/camera_movement` and `evaluation_data/camera_movement`.
+1. Run `python spatial_engine/camera_movement/calculate_frames_relations.py` to calculate the spatial relations between frames, e.g. their overlap ratios. After running this script, a parquet containing this spatial information will be generated in `training_data/camera_movement` and `evaluation_data/camera_movement`.
 
 2. Then run `python spatial_engine/camera_movement/camera_movement_engine_train_val.py` to generate the training and evaluation data.
 
@@ -182,22 +182,22 @@ We generate the data based on the conversation format of [InternVL](https://inte
 2. Run `python spatial_engine/visual_correspondence/visual_correspondence_qa_engine_coor_2_coor.py` to generate the training and evaluation data for visual correspondence in coordinate-based format.
 
 #### Object Perception
-1. Run `python spatial_engine/object_perception/compute_object_visibility.py` to compute the visibility information for each object. After running this script, a pkl file containing these visibility information will be saved to `training_data/object_perception` and `evaluation_data/object_perception`.
+1. Run `python spatial_engine/object_perception/compute_object_visibility.py` to compute the visibility information for each object. After running this script, a pkl file containing this visibility information will be saved to `training_data/object_perception` and `evaluation_data/object_perception`.
 2. Run `bash find_object_coverage.sh` to compute the coverage information for each object in each scene. You could check `spatial_engine/object_perception/single_object_coverage_finder.py` to modify the parameters and run it with several processes.
 3. After generating all the coverage information for each scene, run `python spatial_engine/object_perception/merge_object_coverage.py` to merge the coverage information.
 4. Run `python spatial_engine/object_perception/single_object_perception_engine.py` to generate the training and evaluation data for object perception.
 
 #### Object Movement
-1. Run `python spatial_engine/object_movement/single_object_movement_engine_coord.py` to generate the training and evaluation data for object movement in coordinate-based format. After runing this script, images will be extracted from the npz file and saved to `data/my_tapvid3d_images`.
+1. Run `python spatial_engine/object_movement/single_object_movement_engine_coord.py` to generate the training and evaluation data for object movement in coordinate-based format. After running this script, images will be extracted from the npz file and saved to `data/my_tapvid3d_images`.
 2. Run `python spatial_engine/object_movement/single_object_movement_engine_dot.py` to generate the training and evaluation data for object movement in dot-based format.
 
 ## 🏋️‍♂️ Model Training
 
-We use the [InternVL-2](https://internvl.readthedocs.io/en/latest/internvl2.0/finetune.html#start-2nd-fine-tuning) models for experiments in our paper. You could follow their official instructions to easily finetune the models with the generated data and reproduce our results. Other VLMs can also be used. Below are some training details used in our experiments.
+We use the [InternVL-2](https://internvl.readthedocs.io/en/latest/internvl2.0/finetune.html#start-2nd-fine-tuning) models for experiments in our paper. You could follow their official instructions to easily fine-tune the models with the generated data and reproduce our results. Other VLMs can also be used. Below are some training details used in our experiments, and more can be found in our paper.
 - All images should be resized to `H*W=1296*968` for training.
-- Different from the original InternVL setting of dynamically allocating 12 image tiles to all images, we make sure each image can used up to 6 image tiles for training and evaluation. Please change this [line](https://github.com/OpenGVLab/InternVL/blob/dd3635206874c92386185d586fffeda1026d3a76/internvl_chat/internvl/train/internvl_chat_finetune.py#L488) to `max_num=self.max_dynamic_patch`. Pay attention to GPU OOM issues and you may change the `--max_seq_length` to `8192`.
-- The training config used for our main paper is in `data/configs/mix3M.json`. Note that this config only uses 3M training samples and we use LoRA training for research efficiency. You could use more data and fully fine-tune the whole model to get much better performance.
-- To preserve the originial ability of the model, some general instruction following data should be added to the training data.
+- Different from the original InternVL setting of dynamically allocating 12 image tiles to all images, we make sure each image can use up to 6 image tiles for training and evaluation. Please change this [line](https://github.com/OpenGVLab/InternVL/blob/dd3635206874c92386185d586fffeda1026d3a76/internvl_chat/internvl/train/internvl_chat_finetune.py#L488) to `max_num=self.max_dynamic_patch`. Pay attention to GPU OOM issues, and you may change the `--max_seq_length` to `8192`.
+- The training config used for our main paper is in `data/configs/mix3M.json`. Note that this config only uses 3M training samples, and we use LoRA training for research efficiency. You could use more data and fully fine-tune the whole model to get much better performance.
+- To preserve the original ability of the model, some general instruction-following data should be added to the training data.
 
 ## 🔗 Citation
 
