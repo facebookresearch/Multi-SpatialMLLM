@@ -204,11 +204,11 @@ We use the [InternVL-2](https://internvl.readthedocs.io/en/latest/internvl2.0/fi
 If you find our work and this codebase helpful, please consider starring this repo 🌟 and cite:
 
 ```bibtex
-@article{xu2025multi,
+@inproceedings{xu2025multi,
   title={Multi-SpatialMLLM: Multi-Frame Spatial Understanding with Multi-Modal Large Language Models},
   author={Xu, Runsen and Wang, Weiyao and Tang, Hao and Chen, Xingyu and Wang, Xiaodong and Chu, Fu-Jen and Lin, Dahua and Feiszli, Matt and Liang, Kevin J.},
-  journal={arXiv preprint arXiv:2505.17015},
-  year={2025}
+  booktitle={CVPR},
+  year={2026}
 }
 ```
 
